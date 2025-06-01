@@ -5,12 +5,22 @@ from dotenv import load_dotenv
 
 from parser import parse_java_file
 from comment_generator import generate_comments
+from comment_generators.default_generator import DefaultCommentGenerator
+from comment_generators.openrouter_generator import OpenRouterCommentGenerator
+
 from diagram_generator import generate_class_diagram
 from utils import write_commented_file
+
 
 def process_codebase(input_dir, output_diagram_path, token=None, model=None):
     java_files = glob.glob(os.path.join(input_dir, '**', '*.java'), recursive=True)
     all_class_info = []
+
+    # ✅ Create generator once
+    if token:
+        generator = OpenRouterCommentGenerator(token=token, model=model)
+    else:
+        generator = DefaultCommentGenerator()
 
     for java_file in java_files:
         if java_file.endswith("_commented.java"):
@@ -18,11 +28,12 @@ def process_codebase(input_dir, output_diagram_path, token=None, model=None):
 
         print(f"Processing {java_file}")
         tree = parse_java_file(java_file)
-        commented_code, class_info = generate_comments(java_file, tree, token=token, model=model)
+        commented_code, class_info = generate_comments(java_file, tree, generator)
         write_commented_file(java_file, commented_code)
         all_class_info.append(class_info)
 
     generate_class_diagram(all_class_info, output_path=output_diagram_path)
+
 
 if __name__ == "__main__":
     load_dotenv()

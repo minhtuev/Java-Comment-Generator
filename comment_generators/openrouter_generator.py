@@ -30,6 +30,8 @@ class OpenRouterCommentGenerator(BaseCommentGenerator):
                 f"🧠 Available models include:\n  " +
                 "\n  ".join(sorted(available_models[:10])) + "\n  ..."
             )
+        else:
+            print(f"🧠 Model {self.model} is validated.")
 
     def _query_llm(self, prompt):
         headers = {

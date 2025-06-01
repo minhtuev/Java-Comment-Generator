@@ -2,12 +2,7 @@ from utils import get_access_modifier, extract_block
 from comment_generators.default_generator import DefaultCommentGenerator
 from comment_generators.openrouter_generator import OpenRouterCommentGenerator
 
-def generate_comments(filepath, tree, token=None, model=None):
-    if token:
-        generator = OpenRouterCommentGenerator(token=token, model=model)
-    else:
-        generator = DefaultCommentGenerator()
-
+def generate_comments(filepath, tree, generator):
     with open(filepath, 'r') as f:
         original_lines = f.readlines()
 
@@ -54,3 +49,4 @@ def generate_comments(filepath, tree, token=None, model=None):
         i += 1
 
     return commented_lines, class_info
+
