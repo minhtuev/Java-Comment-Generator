@@ -27,3 +27,6 @@ venv.bak/
 output/
 *.png
 *.svg
+
+# Java files with comments
+*_commented.java
