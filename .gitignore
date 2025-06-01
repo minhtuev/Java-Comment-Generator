@@ -1,32 +1,71 @@
-# Bytecode
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
+# C extensions
+*.so
+
 # Virtual environments
-.env
-.venv
+.venv/
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+myenv/
 
-# macOS system files
-.DS_Store
-
-# Editor-specific
-.idea/
+# IDEs and editors
 .vscode/
+.idea/
 *.swp
 
-# Jupyter Notebook checkpoints
+# PyInstaller
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Django stuff
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff
+instance/
+.webassets-cache
+
+# Scrapy stuff
+.scrapy
+
+# Jupyter Notebook
 .ipynb_checkpoints
 
-# Output files
+# macOS
+.DS_Store
+
+# Graphviz
 output/
 *.png
-*.svg
 
-# Java files with comments
+# Java commented files
 *_commented.java
+
+# Build files
+dist/
+build/
+javacommentgenerator.egg-info/

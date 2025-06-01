@@ -1,4 +1,4 @@
-from comment_generators.base_generator import BaseCommentGenerator
+from .base_generator import BaseCommentGenerator
 from pprint import pprint
 
 class DefaultCommentGenerator:

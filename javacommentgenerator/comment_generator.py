@@ -1,6 +1,6 @@
-from utils import get_access_modifier, extract_block
-from comment_generators.default_generator import DefaultCommentGenerator
-from comment_generators.openrouter_generator import OpenRouterCommentGenerator
+from .utils import get_access_modifier, extract_block
+from .comment_generators.default_generator import DefaultCommentGenerator
+from .comment_generators.openrouter_generator import OpenRouterCommentGenerator
 
 def generate_comments(filepath, tree, generator):
     with open(filepath, 'r') as f:
