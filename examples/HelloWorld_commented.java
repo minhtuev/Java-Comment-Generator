@@ -1,8 +1,12 @@
 /**
- * Public class `HelloWorld` defines the main structure and logic for this component.
+ * ```java
+ * /**
+ * * Simple class demonstrating Java's basic structure with a main method.
+ * */
+ * ```
  */
 public class HelloWorld {
-    // Public method `main` performs a specific task
+    // This `main` method serves as the entry point for the Java application, printing "Hello, world!" to the console upon execution.
     public static void main(String[] args) {
         System.out.println("Hello, world!");
     }

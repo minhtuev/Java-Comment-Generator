@@ -1,6 +1,7 @@
+from comment_generators.base_generator import BaseCommentGenerator
 from pprint import pprint
 
-class DefaultCommentGenerator:
+class DefaultCommentGenerator(BaseCommentGenerator):
     def generate_class_comment(self, class_name, indent, access_modifier, class_body):
         print(f"🔍 Detected class: {class_name}")
         pprint(class_body)
