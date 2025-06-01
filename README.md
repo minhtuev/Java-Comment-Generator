@@ -11,6 +11,7 @@
 - ✅ Supports heuristic or LLM (GPT/Claude/Mixtral) generation  
 - ✅ Non-intrusive: outputs `_commented.java` files  
 - ✅ CLI-configurable and `.env`-friendly  
+- ✅ Extracts class-level dependencies for diagram links
 
 ---
 
@@ -20,6 +21,7 @@
 
 ```bash
 git clone https://github.com/minhtuev/Java-Comment-Generator
+cd Java-Comment-Generator
 ```
 
 ### 2. Install Python Dependencies
@@ -63,22 +65,22 @@ You can get your API key from https://openrouter.ai
 
 ## 🚀 Usage
 
-### Basic Heuristic Commenting
+### Heuristic Commenting (Default Generator)
 
 ```bash
-python main.py
+python main.py --generator default
 ```
 
-### LLM-Powered Commenting (via OpenRouter)
+### LLM-Powered Commenting (OpenRouter)
 
 ```bash
-python main.py --token sk-... --model [model-name]
+python main.py --generator openrouter --token sk-... --model deepseek/deepseek-r1-0528-qwen3-8b:free
 ```
 
-Or, if using `.env`:
+Or use values from `.env`:
 
 ```bash
-python main.py
+python main.py --generator openrouter
 ```
 
 ---
@@ -91,20 +93,39 @@ python main.py
 | `--output`, `-o` | Output diagram path (no extension)                       | `output/code_structure`      |
 | `--token`, `-t`  | OpenRouter API token                                     | `None` (optional via `.env`) |
 | `--model`, `-m`  | Model name (e.g. `mistral/mixtral-8x7b-instruct`)        | `None` (required if using LLM) |
+| `--generator`, `-g` | Comment generator to use (`default` or `openrouter`) | `None` (optional)            |
 
 ---
 
-## 📁 Example Structure
+## 📁 Example Java Files
 
 ```
 examples/
-├── HelloWorld.java
-├── Greeter.java
+├── hello_world/
+│   ├── HelloWorld.java
+│   └── Greeter.java
+└── parking/
+    ├── Car.java
+    ├── ParkingGarage.java
+    └── Main.java
+```
+
+---
+
+## 🖼 Output Artifacts
+
+```
+examples/
+├── hello_world/
+│   ├── HelloWorld_commented.java
+│   └── Greeter_commented.java
+└── parking/
+    ├── Car_commented.java
+    ├── ParkingGarage_commented.java
+    └── Main_commented.java
 
 output/
-├── HelloWorld_commented.java
-├── Greeter_commented.java
-├── code_structure.png
+└── code_structure.png
 ```
 
 ---
@@ -121,14 +142,6 @@ output/
 API_KEY=sk-your-token-here
 MODEL=your-model-name
 ```
-
----
-
-## 🖼 Output
-
-- `_commented.java` files next to originals
-- Diagram image at `output/code_structure.png`
-
 
 ---
 
