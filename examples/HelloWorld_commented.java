@@ -1,8 +1,8 @@
 /**
- * This `HelloWorld` class demonstrates Java's basic structure, serving as a starting point for beginners to understand class definitions and the main method for executing programs.
+ * Simple Java class to demonstrate the 'Hello, World!' program.
  */
 public class HelloWorld {
-    // Prints "Hello, world!" to the console when the class is executed.
+    // This `main` method is the entry point for a Java application, printing "Hello, world!" to standard output when executed.
     public static void main(String[] args) {
         System.out.println("Hello, world!");
     }

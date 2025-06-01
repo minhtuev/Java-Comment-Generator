@@ -27,7 +27,11 @@ def generate_comments(filepath, tree, generator):
             class_info["name"] = class_name
 
             class_block, offset = extract_block(original_lines, i)
-            comment = generator.generate_class_comment(class_name, indent, access_modifier, class_block)
+            comment, dependencies = generator.generate_class_comment(
+                class_name, indent, access_modifier, class_block
+            )
+            class_info["dependencies"].extend(dependencies)
+
             commented_lines.extend(comment)
             commented_lines.append(line)
             i += 1
@@ -39,7 +43,9 @@ def generate_comments(filepath, tree, generator):
             class_info["methods"].append(f"{access_modifier} {method_name}()")
 
             method_block, offset = extract_block(original_lines, i)
-            comment = generator.generate_method_comment(method_name, indent, access_modifier, method_block)
+            comment, _ = generator.generate_method_comment(
+                method_name, indent, access_modifier, method_block
+            )
             commented_lines.append(comment)
             commented_lines.append(line)
             i += 1
@@ -49,4 +55,3 @@ def generate_comments(filepath, tree, generator):
         i += 1
 
     return commented_lines, class_info
-

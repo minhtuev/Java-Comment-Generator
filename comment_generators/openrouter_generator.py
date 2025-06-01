@@ -1,76 +1,106 @@
-from comment_generators.base_generator import BaseCommentGenerator
 import requests
+import json
 
-class OpenRouterCommentGenerator(BaseCommentGenerator):
-    def __init__(self, token, model=None):
-        if not model:
-            raise ValueError("❌ No model specified. Please pass --model or set MODEL in .env")
-
-        self.api_key = token
+class OpenRouterCommentGenerator:
+    def __init__(self, token, model):
+        self.token = token
         self.model = model
-        self.api_url = "https://openrouter.ai/api/v1/chat/completions"
         self._validate_model()
 
     def _validate_model(self):
-        print("🔎 Fetching model list from OpenRouter...")
-        headers = {
-            "Authorization": f"Bearer {self.api_key}"
-        }
         try:
-            response = requests.get("https://openrouter.ai/api/v1/models", headers=headers)
+            print("🔎 Fetching model list from OpenRouter...")
+            response = requests.get(
+                "https://openrouter.ai/api/v1/models",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
             response.raise_for_status()
-            models_response = response.json()
-            available_models = [m["id"] for m in models_response.get("data", [])]
+            models = response.json()
+            available_models = [m["id"] for m in models.get("data", [])]
+            if self.model not in available_models:
+                raise ValueError(f"❌ Model `{self.model}` not available on OpenRouter.")
         except Exception as e:
             raise RuntimeError(f"❌ Failed to fetch model list from OpenRouter: {e}")
 
-        if self.model not in available_models:
-            raise ValueError(
-                f"❌ Model '{self.model}' not found on OpenRouter.\n"
-                f"🧠 Available models include:\n  " +
-                "\n  ".join(sorted(available_models[:10])) + "\n  ..."
-            )
-        else:
-            print(f"🧠 Model {self.model} is validated.")
-
-    def _query_llm(self, prompt):
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://yourdomain.com",  # optional
-            "X-Title": "CodeComprehender"
-        }
-        body = {
-            "model": self.model,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.3
-        }
-
-        response = requests.post(self.api_url, headers=headers, json=body)
-
-        if response.status_code != 200:
-            print(f"❌ OpenRouter Error ({response.status_code}):")
-            print(response.text)
-            response.raise_for_status()
-
-        return response.json()["choices"][0]["message"]["content"]
-
     def generate_class_comment(self, class_name, indent, access_modifier, class_body):
-        java_code = "".join(class_body)
-        prompt = (
-            f"You're an expert Java developer. Write a concise comment describing the purpose of this {access_modifier} class named `{class_name}`:\n\n"
-            f"{java_code}\n\n"
-            "Use 1-2 lines only."
-        )
-        comment_text = self._query_llm(prompt)
-        return [f"{indent}/**\n"] + [f"{indent} * {line.strip()}\n" for line in comment_text.splitlines()] + [f"{indent} */\n"]
+        prompt = self._build_class_prompt(class_name, access_modifier, class_body)
+        try:
+            comment_text, dependencies = self._query_llm(prompt, expect_json=True)
+        except Exception as ex:
+            print("Exception: ", ex)
+            return [], []
+
+        comment_lines = [f"{indent}/**\n"] + [f"{indent} * {line.strip()}\n" for line in comment_text.splitlines()] + [f"{indent} */\n"]
+        return comment_lines, dependencies
 
     def generate_method_comment(self, method_name, indent, access_modifier, method_body):
-        java_code = "".join(method_body)
+        prompt = self._build_method_prompt(method_name, access_modifier, method_body)
+        try:
+            comment_text, _ = self._query_llm(prompt, expect_json=False)
+        except Exception as ex:
+            print("Exception: ", ex)
+            return [], []
+
+        comment_line = f"{indent}// {comment_text.strip()}\n"
+        return comment_line, []
+
+    def _build_class_prompt(self, class_name, access_modifier, class_body):
+        body_str = "\n".join(class_body)
+        return f"""You are an expert Java developer.
+
+Given the following Java class named `{class_name}` (access: {access_modifier}), do two things:
+1. Write a concise comment for the class, do not include any code or quotes in the documentation, one or two lines.
+2. Compute class-level dependencies of this class.
+
+Return a JSON object with:
+  - `comment`: the concise comment, one or two lines. Only return the comment. Do not include code or quotes.
+  - `dependencies`: list of other class names used in this class (e.g., via instantiation, method calls, inheritance, etc).
+
+Example output:
+{{
+  "comment": "This class is responsible for greeting users and depends on HelloWorld.",
+  "dependencies": ["HelloWorld"]
+}}
+
+Class code:
+{body_str}
+"""
+
+    def _build_method_prompt(self, method_name, access_modifier, method_body):
+        body_str = "\n".join(method_body)
         prompt = (
             f"You're an expert Java developer. Write a short comment describing what this {access_modifier} method `{method_name}` does:\n\n"
-            f"{java_code}\n\n"
+            f"{body_str}\n\n"
             "Respond in one line."
         )
-        comment_text = self._query_llm(prompt)
-        return f"{indent}// {comment_text.strip()}\n"
+        return prompt
+
+    def _query_llm(self, prompt, expect_json=True):
+        headers = {
+            "Authorization": f"Bearer {self.token}",
+            "HTTP-Referer": "https://openrouter.ai",  # optional for usage tracking
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}]
+        }
+
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers=headers,
+            data=json.dumps(payload)
+        )
+        response.raise_for_status()
+
+        content = response.json()["choices"][0]["message"]["content"]
+
+        if expect_json:
+            # clean out triple backticks or language tags if present
+            if content.startswith("```"):
+                content = content.strip().strip("```").strip("json").strip()
+            data = json.loads(content)
+            return data["comment"], data.get("dependencies", [])
+        else:
+            return content.strip(), []

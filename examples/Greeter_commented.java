@@ -1,18 +1,14 @@
 /**
- * ```java
- * /**
- * * A simple class that demonstrates greeting by delegating to a HelloWorld instance.
- * */
- * ```
+ * This class handles greetings by invoking methods on a HelloWorld instance.
  */
 public class Greeter {
-    // This method creates a `HelloWorld` object and invokes its `sayHello` method to display a greeting.
+    // This method creates a `HelloWorld` instance and invokes its `sayHello()` method to display a greeting.
     public void greet() {
         HelloWorld hw = new HelloWorld();
         hw.sayHello();
     }
 
-    // This `main` method initializes a `Greeter` object and invokes its `greet()` method to display a greeting message.
+    // Launches a greeting application by initializing a Greeter instance and triggering its greeting method.
     public static void main(String[] args) {
         Greeter greeter = new Greeter();
         greeter.greet();
