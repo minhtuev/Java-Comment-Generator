@@ -45,6 +45,9 @@ coverage.xml
 local_settings.py
 db.sqlite3
 
+# Env stuff
+.env
+
 # Flask stuff
 instance/
 .webassets-cache
