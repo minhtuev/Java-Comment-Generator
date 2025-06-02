@@ -48,6 +48,18 @@ sudo apt install graphviz
 
 Download from https://graphviz.org/download and add it to your PATH.
 
+### 4. (Optional) Install as CLI Tool
+
+```bash
+pip install -e .
+```
+
+Then run:
+
+```bash
+javacommentgenerator --generator default
+```
+
 ---
 
 ## ⚙️ Configuration (Optional)
@@ -68,19 +80,19 @@ You can get your API key from https://openrouter.ai
 ### Heuristic Commenting (Default Generator)
 
 ```bash
-python main.py --generator default
+javacommentgenerator --generator default
 ```
 
 ### LLM-Powered Commenting (OpenRouter)
 
 ```bash
-python main.py --generator openrouter --token sk-... --model deepseek/deepseek-r1-0528-qwen3-8b:free
+javacommentgenerator --generator openrouter --token sk-... --model deepseek/deepseek-r1-0528-qwen3-8b:free
 ```
 
 Or use values from `.env`:
 
 ```bash
-python main.py --generator openrouter
+javacommentgenerator --generator openrouter
 ```
 
 ---
@@ -92,7 +104,7 @@ python main.py --generator openrouter
 | `--input`, `-i`  | Path to Java files                                       | `examples/`                  |
 | `--output`, `-o` | Output diagram path (no extension)                       | `output/code_structure`      |
 | `--token`, `-t`  | OpenRouter API token                                     | `None` (optional via `.env`) |
-| `--model`, `-m`  | Model name (e.g. `mistral/mixtral-8x7b-instruct`)        | `None` (required if using LLM) |
+| `--model`, `-m`  | Model name (e.g. `deepseek/deepseek-r1-0528-qwen3-8b:free`) | `None` (required if using LLM) |
 | `--generator`, `-g` | Comment generator to use (`default` or `openrouter`) | `None` (optional)            |
 
 ---
@@ -154,3 +166,11 @@ MIT License © 2025 Minh Tue Vo
 ## 🤝 Contributing
 
 Pull requests and issues are welcome! Help us extend support, improve accuracy, or add new features.
+
+---
+
+## 🔮 Future Work
+
+- 🚀 Support for Gemini and OpenAI models
+- ⚙️ Support for parallel processing (threading & multiprocessing)
+- 📂 Support for deep project analysis (inter-package references, method call trees)
