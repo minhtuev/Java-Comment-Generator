@@ -97,6 +97,23 @@ javacommentgenerator --generator openrouter
 
 ---
 
+## 🧩 Using CodeComprehender in Python
+
+```python
+from code_comprehender import CodeComprehender
+from comment_generators.openrouter_generator import OpenRouterCommentGenerator
+
+generator = OpenRouterCommentGenerator(
+    token="sk-your-openrouter-token",
+    model="deepseek/deepseek-r1-0528-qwen3-8b:free"
+)
+
+comprehender = CodeComprehender("examples", "output/code_structure", generator)
+comprehender.run()
+```
+
+---
+
 ## 🔧 CLI Options
 
 | Argument         | Description                                              | Default                      |
