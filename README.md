@@ -192,6 +192,6 @@ Pull requests and issues are welcome! Help us extend support, improve accuracy, 
 
 ## 🔮 Future Work
 
-- 🚀 Support for Gemini and OpenAI models
+- 🚀 Support for Gemini and other models
 - ⚙️ Support for parallel processing (threading & multiprocessing)
 - 📂 Support for deep project analysis (inter-package references, method call trees)

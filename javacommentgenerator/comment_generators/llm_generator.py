@@ -62,7 +62,7 @@ Class code:
                 comment_line = f"{indent}// {comment_text.strip()}\n"
                 return comment_line, []
             except Exception as ex:
-                print("Encoutering exception, will retry: ", ex)
+                print(f"Encoutering exception, retry number {i + 1}/{max_tries}: ", ex)
         return [], []
 
     def _process_artifacts(self, content):
