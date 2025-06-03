@@ -65,3 +65,12 @@ Class code:
                 print("Encoutering exception, will retry: ", ex)
         return [], []
 
+    def _process_artifacts(self, content):
+        artifacts = ["```", "json", "//"]
+        content = content.strip()
+        for artifact in artifacts:
+            content = content.strip(artifact)
+        content = content.strip()
+        return content
+
+

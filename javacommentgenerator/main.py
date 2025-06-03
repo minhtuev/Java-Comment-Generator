@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from .code_comprehender import CodeComprehender
 from .comment_generators.default_generator import DefaultCommentGenerator
 from .comment_generators.openrouter_generator import OpenRouterCommentGenerator
+from .comment_generators.openai_generator import OpenAICommentGenerator
 
 
 def select_generator(generator_type, token=None, model=None):
@@ -13,6 +14,11 @@ def select_generator(generator_type, token=None, model=None):
         if not token or not model:
             raise ValueError("❌ OpenRouter generator requires both --token and --model (or set them in .env)")
         return OpenRouterCommentGenerator(token=token, model=model)
+
+    if generator_type == "openai":
+        if not token:
+            raise ValueError("❌ OpenAI generator requires both --token and --model (or set them in .env")
+        return OpenAICommentGenerator(token=token, model=model)
 
     if generator_type == "default":
         return DefaultCommentGenerator()
@@ -38,8 +44,8 @@ def cli_entry_point():
     parser.add_argument("-i", "--input", default="examples", help="Path to directory containing Java files")
     parser.add_argument("-o", "--output", default="output/code_structure", help="Output diagram file path (without extension)")
     parser.add_argument("-t", "--token", default=None, help="OpenRouter API token")
-    parser.add_argument("-m", "--model", default=None, help="Model name to use (e.g. deepseek/deepseek-r1-0528-qwen3-8b:free)")
-    parser.add_argument("-g", "--generator", choices=["default", "openrouter"], default=None, help="Which comment generator to use")
+    parser.add_argument("-m", "--model", default=None, help="Model name to use (e.g. deepseek/deepseek-r1-0528-qwen3-8b:free, gpt-4.1, ...)")
+    parser.add_argument("-g", "--generator", choices=["default", "openrouter", "openai"], default=None, help="Which comment generator to use")
 
     args = parser.parse_args()
 

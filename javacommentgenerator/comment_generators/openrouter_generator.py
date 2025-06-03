@@ -5,8 +5,7 @@ from .llm_generator import LLMCommentGenerator
 
 class OpenRouterCommentGenerator(LLMCommentGenerator):
     def __init__(self, token, model):
-        self.token = token
-        self.model = model
+        super().__init__(token, model)
         self._validate_model()
 
     def _validate_model(self):
@@ -44,11 +43,9 @@ class OpenRouterCommentGenerator(LLMCommentGenerator):
         response.raise_for_status()
 
         content = response.json()["choices"][0]["message"]["content"]
+        content = self._process_artifacts(content)
 
         if expect_json:
-            # clean out triple backticks or language tags if present
-            if content.startswith("```"):
-                content = content.strip().strip("```").strip("json").strip()
             data = json.loads(content)
             return data["comment"], data.get("dependencies", [])
         else:
